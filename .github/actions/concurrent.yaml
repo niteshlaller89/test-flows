@@ -1,0 +1,26 @@
+name: SmokeTests
+description: 'Run smoke test'
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout branch
+      shell: bash
+      run: echo 'Checkout branch'
+
+    - name: Set up node
+      shell: bash
+      run: echo 'Set up node'
+
+    - name: Install dependencies
+      shell: bash
+      run: echo 'Install dependencies'
+
+    - name: Install playwright browsers
+      shell: bash
+      run: echo 'Install playwright browsers'
+
+    - name: Run tests
+      shell: bash
+      run: |
+        echo 'Run tests'
+        sleep 60;
