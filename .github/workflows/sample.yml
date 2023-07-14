@@ -43,5 +43,13 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-      
+
+  run-smoke-tests:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.head_ref }}
+      cancel-in-progress: true
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
       - uses: ./.github/actions/smoke-tests
+
