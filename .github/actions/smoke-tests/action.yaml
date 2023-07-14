@@ -5,13 +5,13 @@ runs:
   using: 'composite'
   steps:
     - name: Change dir
+      working-directory: tests/smoke
       shell: bash
       run: |
-        cd tests/smoke
         pwd
-        echo $GITHUB_ACTION_PATH
   
     - name: Set up node
+      working-directory: tests/smoke
       shell: bash
       run: |
         echo 'Set up node'
