@@ -51,5 +51,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
       - uses: ./.github/actions/smoke-tests
 
