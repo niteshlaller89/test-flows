@@ -6,11 +6,15 @@ runs:
 
     - name: Set up node
       shell: bash
-      run: echo 'Set up node'
+      run: |
+        echo 'Set up node'
+        pwd
 
     - name: Install dependencies
       shell: bash
-      run: echo 'Install dependencies'
+      run: |
+        echo 'Install dependencies'
+        pwd
 
     - name: Install playwright browsers
       shell: bash
