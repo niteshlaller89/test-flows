@@ -52,10 +52,6 @@ jobs:
           pwd
 
   run-smoke-tests:
-    defaults:
-      run:
-        shell: bash
-        working-directory: tests/smoke # only for bash
     concurrency:
       group: ${{ github.workflow }}-${{ github.head_ref }}
       cancel-in-progress: true

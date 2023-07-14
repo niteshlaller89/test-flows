@@ -1,9 +1,14 @@
 name: SmokeTests
 description: 'Run smoke test'
+
 runs:
   using: 'composite'
   steps:
-
+    - name: Change dir
+      shell: bash
+      run: |
+        cd tests/smoke
+  
     - name: Set up node
       shell: bash
       run: |
@@ -24,4 +29,3 @@ runs:
       shell: bash
       run: |
         echo 'Run tests'
-        sleep 60;
