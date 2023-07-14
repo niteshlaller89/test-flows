@@ -54,7 +54,7 @@ jobs:
       # - name: Check out repository
       #   uses: actions/checkout@v3
       - run: |
-          echo /repos/$GITHUB_REPOSITORY_OWNER/$GITHUB_REPOSITORY/deployments
+          echo /repos/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY}/deployments
           gh api --method POST -H "Accept: application/vnd.github+json" \
           /repos/$GITHUB_REPOSITORY_OWNER/$GITHUB_REPOSITORY/deployments \
           -f ref='$GITHUB_REF' \
@@ -64,5 +64,6 @@ jobs:
           -f description='Deployment on dev env'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
       # - uses: ./.github/actions/smoke-tests
 
