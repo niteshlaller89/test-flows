@@ -8,18 +8,22 @@ runs:
       shell: bash
       run: |
         cd tests/smoke
+        pwd
+        echo $GITHUB_ACTION_PATH
   
     - name: Set up node
       shell: bash
       run: |
         echo 'Set up node'
         pwd
+        echo $GITHUB_ACTION_PATH
 
     - name: Install dependencies
       shell: bash
       run: |
         echo 'Install dependencies'
         pwd
+        echo $GITHUB_ACTION_PATH
 
     - name: Install playwright browsers
       shell: bash
