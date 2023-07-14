@@ -51,8 +51,6 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      # - name: Check out repository
-      #   uses: actions/checkout@v3
       - run: |
           echo /repos/${OWNER}/${REPO}/deployments
           gh api --method POST -H "Accept: application/vnd.github+json" \
@@ -67,5 +65,5 @@ jobs:
           REPO: ${{ github.event.repository.name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-      # - uses: ./.github/actions/smoke-tests
+      - uses: ./.github/actions/smoke-tests
 

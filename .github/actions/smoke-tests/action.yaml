@@ -3,9 +3,8 @@ description: 'Run smoke test'
 runs:
   using: 'composite'
   steps:
-    - name: Checkout branch
-      shell: bash
-      run: echo 'Checkout branch'
+    - name: Check out repository
+      uses: actions/checkout@v3
 
     - name: Set up node
       shell: bash
