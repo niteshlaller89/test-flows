@@ -2,12 +2,18 @@ name: SmokeTests
 
 on:
   workflow_call:
+    inputs:
+        environment:
+          required: true
+          type: string
+          default: 'qasmoke01'
   workflow_dispatch:
     inputs:
       environment:
         required: true
-        type: string
-        default: 'qasmoke01'
+        type: choice
+        options: 
+            - 'qasmoke01'
 
 env:
   ENV: ${{ inputs.environment }}
