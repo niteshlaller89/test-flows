@@ -54,7 +54,7 @@ jobs:
         run: |
           echo Sha to deploy: ${GITHUB_SHA}
           sleep 30
-          echo "result=success" >> $GITHUB_OUTPUT
+          echo "result=error" >> $GITHUB_OUTPUT
 
       - name: deployment status update
         if: always()
