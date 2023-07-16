@@ -1,7 +1,6 @@
 name: Deploy blue
 
 on:
-  # workflow_dispatch:
   deployment:
 
 jobs:
@@ -12,5 +11,5 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            sleep 60
             console.log(JSON.stringify(context))
+            sleep 60
