@@ -64,7 +64,7 @@ jobs:
           echo /repos/${OWNER}/${REPO}/deployments
           gh api --method POST -H "Accept: application/vnd.github+json" \
           /repos/$OWNER/$REPO/deployments \
-          -f ref=$GITHUB_REF \
+          -f ref=$BRANCH \
           -F auto_merge=false \
           -f environment='dev' \
           -f payload='{ "deploy": "smoke tests" }' \
@@ -73,6 +73,7 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.head_ref }}
         shell: bash
       - uses: ./.github/actions/smoke-tests
 
