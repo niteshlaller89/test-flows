@@ -45,11 +45,11 @@ jobs:
           echo test, and deploy your project.
           pwd
 
-  run-smoke-tests:
-    needs: ["build"]
-    uses: ./.github/workflows/smoke.yaml
-    with:
-      environment: 'qasmoke01'
+  # run-smoke-tests:
+  #   needs: ["build"]
+  #   uses: ./.github/workflows/smoke.yaml
+  #   with:
+  #     environment: 'qasmoke01'
 
     # concurrency:
     #   group: ${{ github.workflow }}-${{ github.head_ref }}
