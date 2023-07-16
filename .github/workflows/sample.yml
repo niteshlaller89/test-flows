@@ -59,14 +59,13 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       status_url: ${{ steps.smoke_deployment.outputs.status_url }}
-      deployment_status: ${{ steps.await_deployment.outputs.deployment_status }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Trigger Smoke Deployment
         id: smoke_deployment
         run: |
-          echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF} 
+          # echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF} 
           status_url="$(gh api --method POST -H "Accept: application/vnd.github+json" \
           /repos/$OWNER/$REPO/deployments \
           -f ref=$BRANCH \
@@ -76,7 +75,8 @@ jobs:
           -f payload='{ "deploy": "smoke tests" }' \
           -f description='Deployment on dev env' \
           --jq '.data.statuses_url')"
-          echo "::set-output name=status_url::status_url"
+          echo "status_url=${status_url}"
+          echo "status_url=${status_url}" >> $GITHUB_OUTPUT
         env:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
@@ -92,14 +92,12 @@ jobs:
           echo "Statuses: $STATUSES"
           if [ $STATUSES == 0 ]; then
               echo "Not deployment found"
-              echo "::set-output name=deployment_status::none"
           else
               until [ "$COMMIT_STATUS" == "success" ] || [ "$COMMIT_STATUS" == "failure" ]; do
                 ENV_URL=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r '.[0].target_url')
                 COMMIT_STATUS=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r '.[0].state')
               done
-              echo "Environment deployed. Finished."
-              echo "::set-output name=deployment_status::success"
+              echo "Environment deployed. Finished. ENV_URL: ${ENV_URL} COMMIT_STATUS: ${COMMIT_STATUS}"
           fi
       - uses: ./.github/actions/smoke-tests
 
