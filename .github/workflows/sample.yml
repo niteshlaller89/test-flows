@@ -75,7 +75,7 @@ jobs:
           -f environment='dev' \
           -f payload='{ "deploy": "smoke tests" }' \
           -f description='Deployment on dev env' \
-          --jq '.data.statuses_url')"
+          --jq '.statuses_url')"
           echo "status_url=${statuses}"
           # echo "status_url=${statuses}" >> $GITHUB_OUTPUT
         env:
