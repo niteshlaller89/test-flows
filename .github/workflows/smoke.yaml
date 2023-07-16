@@ -1,14 +1,18 @@
 name: SmokeTests
 
 on:
-  workflow_dispatch:
   workflow_call:
     inputs:
         environment:
           required: true
           type: string
           default: 'qasmoke01'
-
+  workflow_dispatch:
+    inputs:
+        environment:
+          required: true
+          type: string
+          default: 'qasmoke01'
 env:
   ENV: ${{ inputs.environment }}
   ENV_URL: https://${{ inputs.environment }}.edu.barco.cloud
