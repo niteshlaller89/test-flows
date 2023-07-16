@@ -57,8 +57,7 @@ jobs:
       cancel-in-progress: true
     needs: [build]
     runs-on: ubuntu-latest
-    environment: 
-      name: dev
+    environment: dev
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
