@@ -41,19 +41,21 @@ jobs:
           -F required_contexts[]='build' \
           -f environment=$ENV \
           -f payload='{ "deploy": "smoke tests" }' \
-          -f description='Deployment on smoke env')"
-          echo $statuses
-          status_url=${echo '$statuses' | jq '.statuses_url'}
-          sha=${echo $statuses | jq '.sha'}
+          -f description='Deployment on smoke env' \
+          --jq '.statuses_url, .sha')"
+
+          status_url=$(jq '.statuses_url'  <<< "${statuses}")
+          sha=$(jq '.sha'  <<< "${statuses}")
           echo "status_url=${status_url} sha=${sha}"
           echo "status_url=${status_url}" >> $GITHUB_OUTPUT
-          echo "sha=${sha}" >> $GITHUB_OUTPUT
+          echo "status_url=${status_url}" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Start deploying smoke env
         id: smoke_deployment
         run: |
-          echo Sha to deploy: ${GITHUB_SHA} {{steps.create_deployment.outputs.sha}} 
+          echo Sha to deploy: ${GITHUB_SHA}
+
           gh api \
           --method POST \
           -H "Accept: application/vnd.github+json" \
