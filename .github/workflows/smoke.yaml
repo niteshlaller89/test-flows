@@ -1,0 +1,114 @@
+name: SmokeTests
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+        environment:
+          required: true
+          type: string
+          default: 'qasmoke01'
+
+env:
+  ENV: ${{ inputs.environment }}
+  ENV_URL: https://${{ inputs.environment }}.edu.barco.cloud
+  OWNER: ${{ github.repository_owner }}
+  REPO: ${{ github.event.repository.name }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  BRANCH: ${{ github.head_ref }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-smoke-tests:
+    name: Deploy smoke test env
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Create smoke test deployment
+        id: create_deployment
+        run: |
+          # echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF} 
+          status_url="$(gh api --method POST -H "Accept: application/vnd.github+json" \
+          /repos/$OWNER/$REPO/deployments \
+          -f ref=$BRANCH \
+          -F auto_merge=false \
+          -F required_contexts[]='build' \
+          -f environment=$ENV \
+          -f payload='{ "deploy": "smoke tests" }' \
+          -f description='Deployment on smoke env' \
+          --jq '.statuses_url')"
+          echo "status_url=${status_url}"
+          echo "status_url=${status_url}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Start deploying smoke env
+        id: smoke_deployment
+        run: |
+          echo Sha to deploy: ${GITHUB_SHA}
+
+          gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          ${{steps.create_deployment.outputs.status_url}} \
+          -f environment=$ENV \
+          -f state='in_progress'
+
+          sleep 30
+          echo "result=success" >> $GITHUB_OUTPUT
+          exit 1
+
+      - name: Deployment Status
+        if : ${{ always() }}
+        run: |
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              ${{steps.create_deployment.outputs.status_url}} \
+              -f environment=$ENV \
+              -f state=${{steps.smoke_deployment.outputs.result}} \
+              -f log_url=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}` \
+              -f description='Deployment completed.' \
+              -f target_url=$ENV_URL
+
+  run-playwright-tests:
+    name: Run playwright tests
+    needs: [deploy-smoke-tests]
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: tests/smoke # only for bash
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+    - name: Change dir
+      working-directory: tests/smoke
+      shell: bash
+      run: |
+        pwd
+  
+    - name: Set up node
+      working-directory: tests/smoke
+      shell: bash
+      run: |
+        echo 'Set up node'
+        pwd
+        echo $GITHUB_ACTION_PATH
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        echo 'Install dependencies'
+        pwd
+        echo $GITHUB_ACTION_PATH
+
+    - name: Install playwright browsers
+      shell: bash
+      run: echo 'Install playwright browsers'
+
+    - name: Run tests
+      shell: bash
+      run: |
+        echo 'Run tests'

@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+    working-directory: projects/edu
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        env:
+          REF: ${{ github.ref }}
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+          REFNAME: ${{ github.ref_name }}
+        run: |
+          echo Hello, world!
+          echo Ref: $REF 
+          echo Head Ref: $HEAD_REF
+          echo Base Ref: $BASE_REF
+          echo Ref Name: $REFNAME
+          pwd
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+          pwd
+
+  run-smoke-tests:
+    needs: ["build"]
+    uses: ./.github/workflows/smoke.yaml
+    with:
+      environment: 'qasmoke01'
+
+    # concurrency:
+    #   group: ${{ github.workflow }}-${{ github.head_ref }}
+    #   cancel-in-progress: true
+    # needs: [build]
+    # runs-on: ubuntu-latest
+    # steps:
+
+
+      # - name: Trigger Smoke Deployment
+      #   id: smoke_deployment
+      #   run: |
+      #     # echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF} 
+      #     status_url="$(gh api --method POST -H "Accept: application/vnd.github+json" \
+      #     /repos/$OWNER/$REPO/deployments \
+      #     -f ref=$BRANCH \
+      #     -F auto_merge=false \
+      #     -F required_contexts[]='build' \
+      #     -f environment='dev' \
+      #     -f payload='{ "deploy": "smoke tests" }' \
+      #     -f description='Deployment on dev env' \
+      #     --jq '.statuses_url')"
+      #     echo "status_url=${status_url}"
+      #     echo "status_url=${status_url}" >> $GITHUB_OUTPUT
+      #   env:
+      #     OWNER: ${{ github.repository_owner }}
+      #     REPO: ${{ github.event.repository.name }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     BRANCH: ${{ github.head_ref }}
+      #   shell: bash
+
+      # - name: "Await smoke deployment"
+      #   run: |
+      #     echo ${{steps.smoke_deployment.outputs.status_url}}
+      #     COMMIT_STATUS="pending"
+      #     gh api \
+      #       --method POST \
+      #       -H "Accept: application/vnd.github+json" \
+      #       ${{steps.smoke_deployment.outputs.status_url}} \
+      #       -f environment='dev' \
+      #     -f state='in_progress'
+  
+      #     sleep 10
+      #     STATUSES=$(curl -s ${{steps.smoke_deployment.outputs.status_url}}  | jq -r 'length')
+      #     echo "Statuses: $STATUSES"
+      #     if [ $STATUSES == 0 ]; then
+      #         echo "Not deployment found"
+      #     else
+      #         until [ "$COMMIT_STATUS" == "success" ] || [ "$COMMIT_STATUS" == "failure" ]; do
+      #         sleep 10  
+      #         ENV_URL=$(curl -s ${{steps.smoke_deployment.outputs.status_url}}  | jq -r '.[0].target_url')
+      #           COMMIT_STATUS=$(curl -s ${{steps.smoke_deployment.outputs.status_url}}  | jq -r '.[0].state')
+      #         done
+      #         echo "Environment deployed. Finished. ENV_URL: ${ENV_URL} COMMIT_STATUS: ${COMMIT_STATUS}"
+      #     fi
+      #   env:
+      #     OWNER: ${{ github.repository_owner }}
+      #     REPO: ${{ github.event.repository.name }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     BRANCH: ${{ github.head_ref }}
+
+
+
+
