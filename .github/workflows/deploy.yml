@@ -12,6 +12,6 @@ jobs:
         with:
           script: |
             console.log(JSON.stringify(context))
-      - name: Deloy
+      - name: Deloy For Smoke Test
         run: |
           sleep 60
