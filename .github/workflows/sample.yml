@@ -61,10 +61,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       - run: |
-          echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF_NAME} 
+          echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF} 
           gh api --method POST -H "Accept: application/vnd.github+json" \
           /repos/$OWNER/$REPO/deployments \
-          -f ref=$GITHUB_REF_NAME \
+          -f ref=$BRANCH \
           -F auto_merge=false \
           -F required_contexts[]='build' \
           -f environment='dev' \
