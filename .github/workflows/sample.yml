@@ -66,9 +66,9 @@ jobs:
         id: smoke_deployment
         run: |
           echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF} 
-          status_url='$(gh api -H "Accept: application/vnd.github+json" \
+          status_url="$(gh api -H "Accept: application/vnd.github+json" \
           /repos/$OWNER/$REPO/deployments?ref=$BRANCH' \
-          --jq '.[] | select(.environment == "dev") | .statuses_url')'
+          --jq '.[] | select(.environment == "dev") | .statuses_url')"
           echo "status_url=${status_url}"
           echo "status_url=${status_url}" >> $GITHUB_OUTPUT
         env:
