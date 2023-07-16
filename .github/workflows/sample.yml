@@ -72,7 +72,6 @@ jobs:
         env:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
       - uses: ./.github/actions/smoke-tests
 
