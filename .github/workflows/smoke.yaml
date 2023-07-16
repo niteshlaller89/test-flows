@@ -72,6 +72,8 @@ jobs:
         shell: bash
         working-directory: tests/smoke # only for bash
     steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
     - name: Change dir
       working-directory: tests/smoke
       shell: bash
