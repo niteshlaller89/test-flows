@@ -53,11 +53,20 @@ jobs:
         id: smoke_deployment
         run: |
           echo Sha to deploy: ${GITHUB_SHA}
+
+          gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          ${{steps.create_deployment.outputs.status_url}} \
+          -f environment=$ENV \
+          -f state='in_progress'
+
           sleep 30
           echo "result=error" >> $GITHUB_OUTPUT
+          exit 1
 
-      - name: deployment status update
-        if: always()
+      - name: Deployment Status
+        # if : ${{ always() }}
         run: |
             gh api \
               --method POST \
