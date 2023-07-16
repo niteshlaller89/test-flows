@@ -1,6 +1,7 @@
 name: Deploy blue
 
 on:
+  workflow_dispatch:
   deployment:
 
 jobs:
