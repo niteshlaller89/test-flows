@@ -50,7 +50,7 @@ jobs:
       - name: Start deploying smoke env
         id: smoke_deployment
         run: |
-          echo Sha to deploy: ${GITHUB_SHA} | ${{github.event.pull_request.head.sha}}
+          echo Sha to deploy: ${GITHUB_SHA} | ${github.event.pull_request.head.sha}
 
           gh api \
           --method POST \
