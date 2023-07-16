@@ -34,7 +34,7 @@ jobs:
         id: create_deployment
         run: |
           # echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF} 
-          statuses="$(gh api --method POST -H "Accept: application/vnd.github+json" \
+          status_url="$(gh api --method POST -H "Accept: application/vnd.github+json" \
           /repos/$OWNER/$REPO/deployments \
           -f ref=$BRANCH \
           -F auto_merge=false \
@@ -42,12 +42,8 @@ jobs:
           -f environment=$ENV \
           -f payload='{ "deploy": "smoke tests" }' \
           -f description='Deployment on smoke env' \
-          --jq '.statuses_url, .sha')"
-
-          status_url=$(jq '.statuses_url'  <<< "${statuses}")
-          sha=$(jq '.sha'  <<< "${statuses}")
-          echo "status_url=${status_url} sha=${sha}"
-          echo "status_url=${status_url}" >> $GITHUB_OUTPUT
+          --jq '.statuses_url')"
+          echo "status_url=${status_url}"
           echo "status_url=${status_url}" >> $GITHUB_OUTPUT
         shell: bash
 
