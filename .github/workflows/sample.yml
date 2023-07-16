@@ -88,7 +88,7 @@ jobs:
         id: await_deployment
         run: |
           COMMIT_STATUS="pending"
-          echo steps.smoke_deployment.outputs.status_url
+          echo ${steps.smoke_deployment.outputs.status_url}
           # sleep 10
           # STATUSES=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r 'length')
           # echo "Statuses: $STATUSES"
