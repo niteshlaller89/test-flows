@@ -42,10 +42,10 @@ jobs:
           -f environment=$ENV \
           -f payload='{ "deploy": "smoke tests" }' \
           -f description='Deployment on smoke env')"
-
-          status_url=${echo '$statues' | jq '.statuses_url'}
-          sha=${echo '$statues' | jq '.sha'}
-          echo "status_url=${status_url}"
+          echo $statuses
+          status_url=${echo '$statuses' | jq '.statuses_url'}
+          sha=${echo $statuses | jq '.sha'}
+          echo "status_url=${status_url} sha=${sha}"
           echo "status_url=${status_url}" >> $GITHUB_OUTPUT
           echo "sha=${sha}" >> $GITHUB_OUTPUT
         shell: bash
