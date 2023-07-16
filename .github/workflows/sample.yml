@@ -57,8 +57,8 @@ jobs:
       cancel-in-progress: true
     needs: [build]
     runs-on: ubuntu-latest
-    # outputs:
-    #   status_url: ${{ steps.smoke_deployment.outputs.status_url }}
+    outputs:
+      status_url: ${{ steps.smoke_deployment.outputs.status_url }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -67,7 +67,7 @@ jobs:
         id: smoke_deployment
         run: |
           # echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF} 
-          statuses="$(gh api --method POST -H "Accept: application/vnd.github+json" \
+          status_url="$(gh api --method POST -H "Accept: application/vnd.github+json" \
           /repos/$OWNER/$REPO/deployments \
           -f ref=$BRANCH \
           -F auto_merge=false \
@@ -76,30 +76,32 @@ jobs:
           -f payload='{ "deploy": "smoke tests" }' \
           -f description='Deployment on dev env' \
           --jq '.statuses_url')"
-          echo "status_url=${statuses}"
-          # echo "status_url=${statuses}" >> $GITHUB_OUTPUT
+          echo "status_url=${status_url}"
+          echo "status_url=${status_url}" >> $GITHUB_OUTPUT
         env:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: ${{ github.head_ref }}
         shell: bash
-      # - name: "Await smoke deployment"
-      #   id: await_deployment
-      #   run: |
-      #     COMMIT_STATUS="pending"
-      #     echo $steps.smoke_deployment.outputs.status_url
-      #     STATUSES=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r 'length')
-      #     echo "Statuses: $STATUSES"
-      #     if [ $STATUSES == 0 ]; then
-      #         echo "Not deployment found"
-      #     else
-      #         until [ "$COMMIT_STATUS" == "success" ] || [ "$COMMIT_STATUS" == "failure" ]; do
-      #           ENV_URL=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r '.[0].target_url')
-      #           COMMIT_STATUS=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r '.[0].state')
-      #         done
-      #         echo "Environment deployed. Finished. ENV_URL: ${ENV_URL} COMMIT_STATUS: ${COMMIT_STATUS}"
-      #     fi
+      - name: "Await smoke deployment"
+        id: await_deployment
+        run: |
+          COMMIT_STATUS="pending"
+          echo $steps.smoke_deployment.outputs.status_url
+          sleep 10
+          STATUSES=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r 'length')
+          echo "Statuses: $STATUSES"
+          if [ $STATUSES == 0 ]; then
+              echo "Not deployment found"
+          else
+              until [ "$COMMIT_STATUS" == "success" ] || [ "$COMMIT_STATUS" == "failure" ]; do
+              sleep 10  
+              ENV_URL=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r '.[0].target_url')
+                COMMIT_STATUS=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r '.[0].state')
+              done
+              echo "Environment deployed. Finished. ENV_URL: ${ENV_URL} COMMIT_STATUS: ${COMMIT_STATUS}"
+          fi
       - uses: ./.github/actions/smoke-tests
 
 
