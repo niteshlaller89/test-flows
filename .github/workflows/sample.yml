@@ -72,7 +72,7 @@ jobs:
           -f ref=$BRANCH \
           -f environment='dev' \
           -f payload='{ "deploy": "smoke tests" }' \
-          --jq -r '.[0].statuses_url')"
+          --jq '.[0].statuses_url')"
           echo "status_url=${status_url}"
           echo "status_url=${status_url}" >> $GITHUB_OUTPUT
         env:
