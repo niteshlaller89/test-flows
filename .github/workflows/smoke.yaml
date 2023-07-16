@@ -61,7 +61,6 @@ jobs:
 
           sleep 30
           echo "result=success" >> $GITHUB_OUTPUT
-          exit 1
 
       - name: Deployment Status
         if : ${{ always() }}
