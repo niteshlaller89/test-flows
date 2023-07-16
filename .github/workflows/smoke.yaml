@@ -71,9 +71,9 @@ jobs:
               ${{steps.create_deployment.outputs.status_url}} \
               -f environment=$ENV \
               -f state=${{steps.smoke_deployment.outputs.result}} \
-              -f log_url=`https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}` \
+              -f log_url=`https://github.com/${OWNER}/${REPO}/actions/runs/${GITHUB_RUN_ID}` \
               -f description='Deployment completed.' \
-              -f target_url=$ENV_URL
+              -f target_url=$ENV_URL    
 
   run-playwright-tests:
     name: Run playwright tests
