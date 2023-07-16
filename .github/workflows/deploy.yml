@@ -8,7 +8,10 @@ jobs:
     name: ${{ github.event.deployment.environment }} deployment in progress
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            console.log(JSON.stringify(context))
+      - name: Deloy
         run: |
-          console.log(JSON.stringify(context))
           sleep 60
