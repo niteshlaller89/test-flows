@@ -87,15 +87,15 @@ jobs:
           COMMIT_STATUS="pending"
           echo ${{steps.smoke_deployment.outputs.status_url}}
           sleep 10
-          STATUSES=$(curl -s ${steps.smoke_deployment.outputs.status_url}  | jq -r 'length')
+          STATUSES=$(curl -s ${{steps.smoke_deployment.outputs.status_url}}  | jq -r 'length')
           echo "Statuses: $STATUSES"
           if [ $STATUSES == 0 ]; then
               echo "Not deployment found"
           else
               until [ "$COMMIT_STATUS" == "success" ] || [ "$COMMIT_STATUS" == "failure" ]; do
               sleep 10  
-              ENV_URL=$(curl -s $steps.smoke_deployment.outputs.status_url}  | jq -r '.[0].target_url')
-                COMMIT_STATUS=$(curl -s $steps.smoke_deployment.outputs.status_url  | jq -r '.[0].state')
+              ENV_URL=$(curl -s ${{steps.smoke_deployment.outputs.status_url}}  | jq -r '.[0].target_url')
+                COMMIT_STATUS=$(curl -s ${{steps.smoke_deployment.outputs.status_url}}  | jq -r '.[0].state')
               done
               echo "Environment deployed. Finished. ENV_URL: ${ENV_URL} COMMIT_STATUS: ${COMMIT_STATUS}"
           fi
