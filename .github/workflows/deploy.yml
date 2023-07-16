@@ -8,8 +8,6 @@ jobs:
   prepare:
     name: ${{ github.event.deployment.environment }} deployment in progress
     runs-on: ubuntu-latest
-    outputs:
-      ref: ${{ steps.preflight.outputs.ref }}
     steps:
       - uses: actions/github-script@v6
         with:
