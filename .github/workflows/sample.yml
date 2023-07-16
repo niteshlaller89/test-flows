@@ -59,6 +59,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
       - name: Get Smoke Deployment
         id: smoke_deployment
         run: |
@@ -94,10 +97,6 @@ jobs:
               done
               echo "Environment deployed. Finished. ENV_URL: ${ENV_URL} COMMIT_STATUS: ${COMMIT_STATUS}"
           fi
-
-      - name: Check out repository
-        uses: actions/checkout@v3
-
       - uses: ./.github/actions/smoke-tests
 
 
