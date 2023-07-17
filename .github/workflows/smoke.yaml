@@ -20,7 +20,7 @@ env:
   REPO: ${{ github.event.repository.name }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
-
+  IS_TAG: ${{ inputs.environment.length > 2}}
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
   cancel-in-progress: true
@@ -35,7 +35,7 @@ jobs:
       - name: Create smoke test deployment
         id: create_deployment
         run: |
-          echo length("/${{ inputs.environment }}")
+          echo ${IS_TAG}
           status_url="$(gh api --method POST -H "Accept: application/vnd.github+json" \
             /repos/${OWNER}/${REPO}/deployments \
             -f ref=${BRANCH} \
