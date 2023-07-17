@@ -35,7 +35,7 @@ jobs:
       - name: Create smoke test deployment
         id: create_deployment
         run: |
-          IS_TAG=$(if [ ${#{{ inputs.environment }}} -gt 2 ]; then echo true; else echo false; fi)
+          IS_TAG=$(if [ ${#{{ENV}}} -gt 2 ]; then echo true; else echo false; fi)
           echo $IS_TAG
           status_url="$(gh api --method POST -H "Accept: application/vnd.github+json" \
             /repos/${OWNER}/${REPO}/deployments \
