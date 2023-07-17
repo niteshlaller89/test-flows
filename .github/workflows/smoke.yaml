@@ -20,7 +20,7 @@ env:
   REPO: ${{ github.event.repository.name }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   BRANCH: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
-  IS_TAG: ${{ inputs.environment.length > 2}}
+  IS_TAG: ${{ inputs.environment.length > 2 && true || false }}
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
   cancel-in-progress: true
