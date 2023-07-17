@@ -19,10 +19,10 @@ env:
   OWNER: ${{ github.repository_owner }}
   REPO: ${{ github.event.repository.name }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  BRANCH: ${{ github.head_ref }}
+  BRANCH: ${{ github.ref_name }}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
