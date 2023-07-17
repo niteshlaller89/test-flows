@@ -26,58 +26,66 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy-smoke-tests:
+  prepare:
     name: Deploy smoke test env
     runs-on: ubuntu-latest
-    steps: 
+    outputs:
+      status_url: ${{ steps.create_deployment.outputs.status_url }}
+    steps:
       - name: Create smoke test deployment
         id: create_deployment
         run: |
-          # echo /repos/${OWNER}/${REPO}/deployments Branch: ${BRANCH} Github Ref: ${GITHUB_REF} 
           status_url="$(gh api --method POST -H "Accept: application/vnd.github+json" \
-          /repos/${OWNER}/${REPO}/deployments \
-          -f ref=$BRANCH \
-          -F auto_merge=false \
-          -F required_contexts[]='build' \
-          -f environment=${ENV} \
-          -f payload='{ "deploy": "smoke tests" }' \
-          -f description='Deployment on smoke env' \
-          --jq '.statuses_url')"
-          echo "status_url=${status_url}"
-          echo "status_url=${status_url}" >> $GITHUB_OUTPUT
+            /repos/${OWNER}/${REPO}/deployments \
+            -f ref=${BRANCH} \
+            -F auto_merge=false \
+            -F required_contexts[]='build' \
+            -f environment=${ENV} \
+            -f payload='{ "deploy": "Deploy smoke test environment" }' \
+            -f description='Deploy Smoke Test Env' \
+            --jq '.statuses_url')"
+            echo "status_url=${status_url}"
+            echo "status_url=${status_url}" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Start deploying smoke env
-        id: smoke_deployment
-        run: |
-          echo Sha to deploy: ${GITHUB_SHA} ${{github.event.pull_request.head.sha}}
+  deploy:
+    name: Check deployment status
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - run: |
+            echo Sha to deploy: ${GITHUB_SHA} ${{github.event.pull_request.head.sha}}
 
+            gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            ${{needs.prepare.outputs.status_url}} \
+            -f environment=$ENV \
+            -f state='in_progress'
+
+            sleep 30
+            echo "result=success" >> $GITHUB_OUTPUT
+
+  check:
+    name: Check deployment status
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs: [prepare, deploy]
+    steps:
+      - run: |
           gh api \
           --method POST \
           -H "Accept: application/vnd.github+json" \
-          ${{steps.create_deployment.outputs.status_url}} \
-          -f environment=$ENV \
-          -f state='in_progress'
-
-          sleep 30
-          echo "result=success" >> $GITHUB_OUTPUT
-
-      - name: Deployment Status
-        if : ${{ always() }}
-        run: |
-            gh api \
-              --method POST \
-              -H "Accept: application/vnd.github+json" \
-              ${{steps.create_deployment.outputs.status_url}} \
-              -f environment=${ENV} \
-              -f state=${{steps.smoke_deployment.outputs.result}} \
-              -f log_url=`https://github.com/${OWNER}/${REPO}/actions/runs/${GITHUB_RUN_ID}` \
-              -f description='Deployment completed.' \
-              -f target_url=${ENV_URL}    
+          ${{needs.prepare.outputs.status_url}} \
+          -f environment=${ENV} \
+          -f state=${{ needs.deploy.result == 'success' }} ? 'success' : 'error', \
+          -f log_url=`https://github.com/${OWNER}/${REPO}/actions/runs/${{github.run_id}}` \
+          -f description='Deployment completed.' \
+          -f target_url=${ENV_URL}
 
   run-playwright-tests:
     name: Run playwright tests
-    needs: [deploy-smoke-tests]
+    needs: [check]
     runs-on: ubuntu-22.04
     defaults:
       run:
