@@ -60,11 +60,11 @@ jobs:
             echo Sha to deploy: ${GITHUB_SHA} ${{github.event.pull_request.head.sha}}
 
             gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            ${{needs.prepare.outputs.status_url}} \
-            -f environment=$ENV \
-            -f state='in_progress'
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              ${{needs.prepare.outputs.status_url}} \
+              -f environment=$ENV \
+              -f state='in_progress'
 
             sleep 5
             echo "result=success" >> $GITHUB_OUTPUT
