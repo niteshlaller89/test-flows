@@ -35,7 +35,7 @@ jobs:
       - name: Create smoke test deployment
         id: create_deployment
         run: |
-          echo length(${{ inputs.environment }})
+          echo length("/${{ inputs.environment }}")
           status_url="$(gh api --method POST -H "Accept: application/vnd.github+json" \
             /repos/${OWNER}/${REPO}/deployments \
             -f ref=${BRANCH} \
