@@ -78,14 +78,14 @@ jobs:
     steps:
       - run: |
           gh api \
-          --method POST \
-          -H "Accept: application/vnd.github+json" \
-          ${{needs.prepare.outputs.status_url}} \
-          -f environment=${ENV} \
-          -f state=${{ needs.deploy.outputs.result == 'success' }} ? 'success' : 'error', \
-          -f log_url=`https://github.com/${OWNER}/${REPO}/actions/runs/${{github.run_id}}` \
-          -f description='Deployment completed.' \
-          -f target_url=${ENV_URL}
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            ${{needs.prepare.outputs.status_url}} \
+            -f environment=${ENV} \
+            -f state=${{ needs.deploy.outputs.result == 'success' }} ? 'success' : 'error', \
+            -f log_url=`https://github.com/${OWNER}/${REPO}/actions/runs/${{github.run_id}}` \
+            -f description='Deployment completed.' \
+            -f target_url=${ENV_URL}
         shell: bash
 
   run-playwright-tests:
