@@ -39,7 +39,7 @@ jobs:
             /repos/${OWNER}/${REPO}/deployments \
             -f ref=${BRANCH} \
             -F auto_merge=false \
-            -F required_contexts[]='build' \
+            -f required_contexts[] \
             -f environment=${ENV} \
             -f payload='{ "deploy": "Deploy smoke test environment" }' \
             -f description='Deploy Smoke Test Env' \
